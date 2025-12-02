@@ -1,87 +1,79 @@
-# Testing and Debugging MERN Applications
+# MERN Testing & Debugging Assignment
 
-This assignment focuses on implementing comprehensive testing strategies for a MERN stack application, including unit testing, integration testing, and end-to-end testing, along with debugging techniques.
+## 🚀 Project Overview
+This project demonstrates a comprehensive testing strategy for a MERN stack application. It implements a robust suite of Unit, Integration, and End-to-End tests to ensure application reliability and 86% code coverage.
 
-## Assignment Overview
+## 🛠️ Testing Strategy
 
-You will:
-1. Set up testing environments for both client and server
-2. Write unit tests for React components and server functions
-3. Implement integration tests for API endpoints
-4. Create end-to-end tests for critical user flows
-5. Apply debugging techniques for common MERN stack issues
+### 1. Unit Testing (Jest)
+**Goal:** Verify isolation of logic without external dependencies.
+- **Server:** We mocked `req`, `res`, and `next` to test Middleware (`authMiddleware.js`) and Utility functions (`auth.js`) in isolation.
+- **Client:** We tested pure logic functions (`validation.js`) and UI components (`Button.jsx`) using React Testing Library to ensure props render correct classes.
 
-## Project Structure
+### 2. Integration Testing (Supertest & MongoMemoryServer)
+**Goal:** Verify data flow between API, Controller, and Database.
+- **Tools:** Used `mongodb-memory-server` to spin up a fresh database for every test suite, ensuring tests do not affect production data.
+- **Scope:** Covered `Post` and `Auth` routes. Verified that valid tokens allow access to protected routes and invalid data returns correct 400/401 errors.
 
-```
-mern-testing/
-├── client/                 # React front-end
-│   ├── src/                # React source code
-│   │   ├── components/     # React components
-│   │   ├── tests/          # Client-side tests
-│   │   │   ├── unit/       # Unit tests
-│   │   │   └── integration/ # Integration tests
-│   │   └── App.jsx         # Main application component
-│   └── cypress/            # End-to-end tests
-├── server/                 # Express.js back-end
-│   ├── src/                # Server source code
-│   │   ├── controllers/    # Route controllers
-│   │   ├── models/         # Mongoose models
-│   │   ├── routes/         # API routes
-│   │   └── middleware/     # Custom middleware
-│   └── tests/              # Server-side tests
-│       ├── unit/           # Unit tests
-│       └── integration/    # Integration tests
-├── jest.config.js          # Jest configuration
-└── package.json            # Project dependencies
-```
+### 3. End-to-End Testing (Cypress)
+**Goal:** Simulate real user behavior in the browser.
+- **Setup:** Configured a "Split Terminal" environment where Frontend (Port 3000) proxies requests to Backend (Port 5000).
+- **Tests:** Verified the critical "User sees posts" flow. Confirmed that the React app successfully fetches and displays data from the live server.
 
-## Getting Started
+---
 
-1. Accept the GitHub Classroom assignment invitation
-2. Clone your personal repository that was created by GitHub Classroom
-3. Follow the setup instructions in the `Week6-Assignment.md` file
-4. Explore the starter code and existing tests
-5. Complete the tasks outlined in the assignment
+## 📸 Test Coverage & Evidence
 
-## Files Included
+### Code Coverage Report (Server)
+**Result:** >86% Statement Coverage (Exceeds 70% requirement).
+![Coverage Report](./screenshots/coverage-report.png)
 
-- `Week6-Assignment.md`: Detailed assignment instructions
-- Starter code for a MERN application with basic test setup:
-  - Sample React components with test files
-  - Express routes with test files
-  - Jest and testing library configurations
-  - Example tests for reference
+### End-to-End Success (Cypress)
+**Result:** All critical user flows passing.
+![Cypress Success](./screenshots/cypress-success.png)
 
-## Requirements
+---
 
-- Node.js (v18 or higher)
-- MongoDB (local installation or Atlas account)
-- npm or yarn
-- Basic understanding of testing concepts
+## 🐛 Debugging Techniques Implemented
 
-## Testing Tools
+During development, several critical bugs were identified and resolved using the following techniques:
 
-- Jest: JavaScript testing framework
-- React Testing Library: Testing utilities for React
-- Supertest: HTTP assertions for API testing
-- Cypress/Playwright: End-to-end testing framework
-- MongoDB Memory Server: In-memory MongoDB for testing
+### 1. Logic Error Identification (Integration Tests)
+* **Issue:** The `createPost` test was failing despite a 400 Bad Request response.
+* **Diagnosis:** Analyzed Jest output: `Expected property "error", received "message"`.
+* **Fix:** Updated `postController.js` to standardize error response keys. This aligns the API implementation with the specific requirements of the test suite.
 
-## Submission
+### 2. Library Version Compatibility (Unit Tests)
+* **Issue:** `TypeError: Class constructor ObjectId cannot be invoked without 'new'`.
+* **Diagnosis:** Identified that the test suite used older Mongoose syntax while the project used Mongoose v6+.
+* **Fix:** Refactored tests to use `new mongoose.Types.ObjectId()`.
 
-Your work will be automatically submitted when you push to your GitHub Classroom repository. Make sure to:
+### 3. Environment & Network Debugging (E2E Tests)
+* **Issue:** Cypress reported `Unexpected token '<'` when fetching posts.
+* **Diagnosis:** This indicated the React frontend was returning its own HTML (index.html) instead of API JSON data, meaning the API request wasn't reaching the server.
+* **Fix:** Configured `"proxy": "http://localhost:5000"` in the client `package.json` and restarted the development server to bridge the frontend-backend communication gap.
 
-1. Complete all required tests (unit, integration, and end-to-end)
-2. Achieve at least 70% code coverage for unit tests
-3. Document your testing strategy in the README.md
-4. Include screenshots of your test coverage reports
-5. Demonstrate debugging techniques in your code
+---
 
-## Resources
+## 🔧 How to Run
 
-- [Jest Documentation](https://jestjs.io/docs/getting-started)
-- [React Testing Library Documentation](https://testing-library.com/docs/react-testing-library/intro/)
-- [Supertest Documentation](https://github.com/visionmedia/supertest)
-- [Cypress Documentation](https://docs.cypress.io/)
-- [MongoDB Testing Best Practices](https://www.mongodb.com/blog/post/mongodb-testing-best-practices) 
+1. **Install Dependencies:**
+   ```bash
+   npm run install-all
+2. **Run Tests:**
+
+Bash
+
+# Server Tests
+cd server && npm test
+
+# Client Tests
+cd client && npm test
+
+# E2E Tests (Requires Server & Client running)
+cd client && npm run cypress:open
+
+[Coverage] link:C:\Users\PC\Documents\PLP\Class Work\MERN\Week 6\mern-testing\testing-and-debugging-ensuring-mern-app-reliability-Padawan33\Screenshots\coverage-report.png.png
+
+
+[Cypress Success] link:C:\Users\PC\Documents\PLP\Class Work\MERN\Week 6\mern-testing\testing-and-debugging-ensuring-mern-app-reliability-Padawan33\Screenshots\cypress-success.png.png
